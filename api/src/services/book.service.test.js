@@ -1,20 +1,8 @@
+const { generateManyBooks } = require('../fakes/book.fake');
 const BooksService = require('./books.service');
 
 // books for tests
-const fakeBooks = [
-  {
-    _id: 1,
-    name: 'Harry Potter',
-  },
-  {
-    _id: 2,
-    name: 'El Señor de Los Anillos',
-  },
-  {
-    _id: 3,
-    name: 'Hábitos Atómicos',
-  },
-];
+
 
 // para esto es una prueba espía o caja blanca
 const mockGetAll = jest.fn();
@@ -41,15 +29,26 @@ describe('Test for BooksService', () => {
   describe('test for getBooks', () => {
     test('should return a list of books', async () => {
       // arrange => prueba caja blanca
-      mockGetAll.mockResolvedValue([{
-        _id: 4,
-        name: 'HP 2',
-      }]);
+      const fakeBooks = generateManyBooks(20);
+      mockGetAll.mockResolvedValue(fakeBooks);
       // act
       const books = await service.getBooks({});
       console.log(books);
       // assert
-      expect(books[0].name).toEqual('HP 2');
+      expect(books.length).toEqual(fakeBooks.length);
+      expect(mockGetAll).toHaveBeenCalled();
+      expect(mockGetAll).toHaveBeenCalledTimes(1);
+      expect(mockGetAll).toHaveBeenCalledWith('books', {});
+    });
+    test('should return a list of books', async () => {
+      // arrange => prueba caja blanca
+      const fakeBooks = generateManyBooks(4);
+      mockGetAll.mockResolvedValue(fakeBooks);
+      // act
+      const books = await service.getBooks({});
+      console.log(books);
+      // assert
+      expect(books.length).toEqual(fakeBooks.length);
       expect(mockGetAll).toHaveBeenCalled();
       expect(mockGetAll).toHaveBeenCalledTimes(1);
       expect(mockGetAll).toHaveBeenCalledWith('books', {});
